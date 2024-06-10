@@ -3,10 +3,7 @@ use std::io::BufWriter;
 
 use serde_json::to_string;
 
-use configuration::app::App;
-
 use crate::configuration::config::Config;
-use crate::configuration::package::Package;
 
 mod configuration;
 
@@ -21,17 +18,7 @@ fn main() {
         Some(("init", _)) => {
             let file = File::create("meta-repo.config.json");
             let mut writer = BufWriter::new(file.unwrap());
-            let config = Config {
-                apps: vec![
-                    App {
-                        dir: "".to_string(),
-                        git: "".to_string(),
-                    }],
-                packages: vec![Package {
-                    dir: "".to_string(),
-                    git: "".to_string(),
-                }],
-            };
+            let config = Config::get_initial_config();
 
             to_string(&config).unwrap();
 
