@@ -9,6 +9,9 @@ fn main() {
         .subcommand(clap::Command::new("init")
             .about("initialize the meta-repo")
         )
+        .subcommand(clap::Command::new("install")
+            .about("run npm install on all packages")
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -17,6 +20,9 @@ fn main() {
         }
         Some(("init", _)) => {
             command::init::init();
+        }
+        Some(("install", _)) => {
+            command::install::install();
         }
         _ => {
             eprintln!("No command provided");

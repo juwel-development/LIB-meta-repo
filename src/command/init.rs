@@ -1,27 +1,23 @@
-use std::{env, fs, thread};
+use std::{env, thread};
 use std::path::Path;
 
 use git2::{Cred, RemoteCallbacks};
 use git2::build::RepoBuilder;
+use crate::command::install::install;
 
 use crate::configuration::config::Config;
-use crate::configuration::config::CONFIG_FILE;
 
 pub fn init() {
     println!("Starting initialization...");
 
-    let file_content = fs::read_to_string(CONFIG_FILE).unwrap();
-    let config: Config = serde_json::from_str(&file_content).unwrap();
+    let config = Config::read_config();
 
-    // Prepare builder.
     let mut handles = vec![];
-
     for app in config.apps {
         handles.push(thread::spawn(move || {
             clone_repo(&app.git, &app.dir);
         }));
     }
-
     for package in config.packages {
         handles.push(thread::spawn(move || {
             clone_repo(&package.git, &package.dir);
@@ -33,6 +29,8 @@ pub fn init() {
     }
 
     println!("Initialization of completed.");
+
+    install();
 }
 
 fn get_git_credentials(mut callbacks: RemoteCallbacks) -> RemoteCallbacks {

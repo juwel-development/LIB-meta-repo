@@ -1,3 +1,5 @@
+use std::fs::read_to_string;
+
 use serde::{Deserialize, Serialize};
 
 use crate::configuration::app::App;
@@ -25,5 +27,10 @@ impl Config {
                 Package::get_initial_config(),
             ],
         }
+    }
+
+    pub fn read_config() -> Self {
+        let file_content = read_to_string(CONFIG_FILE).unwrap();
+        serde_json::from_str(&file_content).unwrap()
     }
 }
