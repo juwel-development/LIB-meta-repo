@@ -1,28 +1,16 @@
-use std::fs::File;
-use std::io::BufWriter;
-
-use serde_json::to_string;
-
-use crate::configuration::config::Config;
-
 mod configuration;
+mod command;
 
 fn main() {
     let matches = clap::Command::new("meta-repo")
-        .subcommand(clap::Command::new("init")
-            .about("Initialize a new project")
+        .subcommand(clap::Command::new("setup")
+            .about("setup the meta-repo")
         )
         .get_matches();
 
     match matches.subcommand() {
-        Some(("init", _)) => {
-            let file = File::create("meta-repo.config.json");
-            let mut writer = BufWriter::new(file.unwrap());
-            let config = Config::get_initial_config();
-
-            to_string(&config).unwrap();
-
-            serde_json::to_writer_pretty(&mut writer, &config).unwrap();
+        Some(("setup", _)) => {
+            command::setup::setup();
         }
         _ => {
             eprintln!("No command provided");
