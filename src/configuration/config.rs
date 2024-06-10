@@ -1,13 +1,16 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::configuration::app::App;
 use crate::configuration::package::Package;
 
-#[derive(Debug, Serialize)]
+pub static CONFIG_FILE: &str = "meta-repo.config.json";
+
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
     pub apps: Vec<App>,
     pub packages: Vec<Package>,
 }
+
 
 impl Config {
     /**
