@@ -1,18 +1,41 @@
-use std::{env, fs};
+use std::{env, fs, thread};
 use std::path::Path;
 
 use git2::{Cred, RemoteCallbacks};
+use git2::build::RepoBuilder;
 
 use crate::configuration::config::Config;
 use crate::configuration::config::CONFIG_FILE;
 
 pub fn init() {
-    println!("Starting initialization of the meta repo...");
+    println!("Starting initialization...");
 
     let file_content = fs::read_to_string(CONFIG_FILE).unwrap();
     let config: Config = serde_json::from_str(&file_content).unwrap();
 
-    let mut callbacks = RemoteCallbacks::new();
+    // Prepare builder.
+    let mut handles = vec![];
+
+    for app in config.apps {
+        handles.push(thread::spawn(move || {
+            clone_repo(&app.git, &app.dir);
+        }));
+    }
+
+    for package in config.packages {
+        handles.push(thread::spawn(move || {
+            clone_repo(&package.git, &package.dir);
+        }));
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!("Initialization of completed.");
+}
+
+fn get_git_credentials(mut callbacks: RemoteCallbacks) -> RemoteCallbacks {
     callbacks.credentials(|_url, username_from_url, _allowed_types| {
         Cred::ssh_key(
             username_from_url.unwrap(),
@@ -22,43 +45,27 @@ pub fn init() {
         )
     });
 
-    // Prepare fetch options.
-    let mut fo = git2::FetchOptions::new();
-    fo.remote_callbacks(callbacks);
+    return callbacks;
+}
 
-    // Prepare builder.
-    let mut builder = git2::build::RepoBuilder::new();
+fn clone_repo(repo_url: &str, repo_dir: &str) {
+    if repo_url == "" || repo_dir == "" {
+        return;
+    }
+
+    if Path::new(repo_dir).exists() {
+        println!("{} already exists, skipping cloning.", repo_dir);
+        return;
+    }
+
+    let mut fo = git2::FetchOptions::new();
+    let callbacks = RemoteCallbacks::new();
+    fo.remote_callbacks(get_git_credentials(callbacks));
+
+    let mut builder = RepoBuilder::new();
     builder.fetch_options(fo);
 
-    for app in config.apps {
-        if &app.dir == "" || &app.git == "" {
-            continue;
-        }
-
-        if Path::new(&app.dir).exists() {
-            println!("{} already exists, skipping cloning.", app.dir);
-            continue;
-        }
-
-        println!("Cloning {} into {}", app.git, app.dir);
-        let repo = builder.clone(&app.git, Path::new(&app.dir)).unwrap();
-        println!("Cloned {} into {}", repo.workdir().unwrap().display(), app.dir);
-    }
-
-    for package in config.packages {
-        if &package.dir == "" || &package.git == "" {
-            continue;
-        }
-
-        if Path::new(&package.dir).exists() {
-            println!("{} already exists, skipping cloning.", package.dir);
-            continue;
-        }
-        // Clone the repository.
-        println!("Cloning {} into {}", package.git, package.dir);
-        let repo = builder.clone(&package.git, Path::new(&package.dir)).unwrap();
-        println!("Cloned {} into {}", repo.workdir().unwrap().display(), package.dir);
-    }
-
-    println!("Initialization of the meta repo completed.");
+    println!("Cloning {} into {}", repo_dir, repo_url);
+    builder.clone(repo_url, Path::new(repo_dir)).unwrap();
+    println!("Cloned {} into {}", repo_url, repo_dir);
 }
