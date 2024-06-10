@@ -25,10 +25,14 @@ pub fn install() {
     }
     println!("Installation completed.");
     let linked_packages = lock.lock().unwrap();
-    println!("Linked packages: {:?}", linked_packages);
+    println!("Linkable packages: {:?}", linked_packages);
 
     for package in config.packages.clone() {
         npm_link_dependencies(package.dir.as_str(), &linked_packages);
+    }
+
+    for app in config.apps {
+        npm_link_dependencies(app.dir.as_str(), &linked_packages);
     }
 }
 
