@@ -1,23 +1,15 @@
-mod configuration;
 mod command;
+mod configuration;
 
 fn main() {
     let matches = clap::Command::new("meta-repo")
-        .subcommand(clap::Command::new("setup")
-            .about("setup the meta-repo")
-        )
-        .subcommand(clap::Command::new("init")
-            .about("initialize the meta-repo")
-        )
-        .subcommand(clap::Command::new("install")
-            .about("run npm install on all packages")
-        )
-        .subcommand(clap::Command::new("start-app")
-            .about("start an app")
-            .arg(clap::Arg::new("app")
-                .required(true)
-                .index(1)
-            )
+        .subcommand(clap::Command::new("setup").about("setup the meta-repo"))
+        .subcommand(clap::Command::new("init").about("initialize the meta-repo"))
+        .subcommand(clap::Command::new("install").about("run npm install on all packages"))
+        .subcommand(
+            clap::Command::new("start-app")
+                .about("start an app")
+                .arg(clap::Arg::new("app").required(true).index(1)),
         )
         .get_matches();
 

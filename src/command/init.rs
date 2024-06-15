@@ -1,10 +1,10 @@
-use std::{env, thread};
 use std::path::Path;
+use std::{env, thread};
 
-use git2::{Cred, RemoteCallbacks};
 use git2::build::RepoBuilder;
-use crate::command::install::install;
+use git2::{Cred, RemoteCallbacks};
 
+use crate::command::install::install;
 use crate::configuration::config::Config;
 
 pub fn init() {
@@ -43,11 +43,11 @@ fn get_git_credentials(mut callbacks: RemoteCallbacks) -> RemoteCallbacks {
         )
     });
 
-    return callbacks;
+    callbacks
 }
 
 fn clone_repo(repo_url: &str, repo_dir: &str) {
-    if repo_url == "" || repo_dir == "" {
+    if repo_url.is_empty() || repo_dir.is_empty() {
         return;
     }
 

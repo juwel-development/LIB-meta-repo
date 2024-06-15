@@ -8,7 +8,7 @@ pub fn start(app_name: String) {
     let app_config = config.apps.iter().find(|app| {
         let name = app.get_name_from_package_json();
 
-        return name == app_name;
+        name == app_name
     });
 
     if app_config.is_none() {

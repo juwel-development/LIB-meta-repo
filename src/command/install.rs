@@ -51,8 +51,16 @@ fn run_npm_install(package_name: &String, dir: String) {
         .output()
         .expect("failed to execute npm install");
 
-    println!("{}: {}", package_name, String::from_utf8_lossy(&output.stdout));
-    println!("{}: {}", package_name, String::from_utf8_lossy(&output.stderr));
+    println!(
+        "{}: {}",
+        package_name,
+        String::from_utf8_lossy(&output.stdout)
+    );
+    println!(
+        "{}: {}",
+        package_name,
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
 
 fn run_npm_link(package_name: &String, dir: &str) {
@@ -62,11 +70,19 @@ fn run_npm_link(package_name: &String, dir: &str) {
         .output()
         .expect("failed to execute npm link");
 
-    println!("{}: {}", package_name, String::from_utf8_lossy(&output.stdout));
-    println!("{}: {}", package_name, String::from_utf8_lossy(&output.stderr));
+    println!(
+        "{}: {}",
+        package_name,
+        String::from_utf8_lossy(&output.stdout)
+    );
+    println!(
+        "{}: {}",
+        package_name,
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
 
-fn npm_link_dependencies(dir: &str, linked_packages: &Vec<String>) {
+fn npm_link_dependencies(dir: &str, linked_packages: &[String]) {
     let package_json = std::fs::read_to_string(format!("{}/package.json", dir)).unwrap();
     let package_json_parsed: serde_json::Value = serde_json::from_str(&package_json).unwrap();
 
