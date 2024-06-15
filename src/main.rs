@@ -12,6 +12,13 @@ fn main() {
         .subcommand(clap::Command::new("install")
             .about("run npm install on all packages")
         )
+        .subcommand(clap::Command::new("start-app")
+            .about("start an app")
+            .arg(clap::Arg::new("app")
+                .required(true)
+                .index(1)
+            )
+        )
         .get_matches();
 
     match matches.subcommand() {
@@ -23,6 +30,10 @@ fn main() {
         }
         Some(("install", _)) => {
             command::install::install();
+        }
+        Some(("start-app", arg_matcher)) => {
+            let app = arg_matcher.get_one::<String>("app").unwrap().to_string();
+            command::start::start(app);
         }
         _ => {
             eprintln!("No command provided");
