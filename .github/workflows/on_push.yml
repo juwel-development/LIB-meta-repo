@@ -8,27 +8,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      - uses: dtolnay/rust-toolchain@stable
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: --tests --verbose -- -D warnings
+          args: --tests -- -D warnings
 
   rustfmt:
     name: Formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      - uses: dtolnay/rust-toolchain@stable
       - name: Check the formatting
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --all -- --check --verbose
+          args: --all -- --check
 
   build:
     name: Build
@@ -38,9 +34,7 @@ jobs:
       - rustfmt
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      - uses: dtolnay/rust-toolchain@stable
       - uses: actions-rs/cargo@v1
         with:
           command: build
