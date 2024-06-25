@@ -72,7 +72,7 @@ jobs:
             TARGET: aarch64-apple-darwin,
           }
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.build.OS }}
     needs:
       - lint
       - rustfmt
