@@ -3,8 +3,14 @@ use crate::configuration::config::Config;
 pub fn start(app_name: String) {
     println!("Starting app: {}", app_name);
 
-    // find the app in the config
     let config = Config::read_config();
+
+    // start build for all packages
+    for package in config.packages.clone() {
+        std::thread::spawn(move || run_npm_start(&package.dir));
+    }
+
+    // find the app in the config
     let app_config = config.apps.iter().find(|app| {
         let name = app.get_name_from_package_json();
 
