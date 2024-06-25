@@ -3,12 +3,15 @@ on: [ push ]
 name: CI
 
 jobs:
+
   lint:
     name: Linting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
@@ -19,7 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
       - name: Check the formatting
         uses: actions-rs/cargo@v1
         with:
@@ -27,15 +32,59 @@ jobs:
           args: --all -- --check
 
   build:
+    strategy:
+      matrix:
+        build:
+          - {
+            NAME: linux-x64-glibc,
+            OS: ubuntu-20.04,
+            TOOLCHAIN: stable,
+            TARGET: x86_64-unknown-linux-gnu,
+          }
+          - {
+            NAME: linux-arm64-glibc,
+            OS: ubuntu-20.04,
+            TOOLCHAIN: stable,
+            TARGET: aarch64-unknown-linux-gnu,
+          }
+          - {
+            NAME: win32-x64-msvc,
+            OS: windows-2022,
+            TOOLCHAIN: stable,
+            TARGET: x86_64-pc-windows-msvc,
+          }
+          - {
+            NAME: win32-arm64-msvc,
+            OS: windows-2022,
+            TOOLCHAIN: stable,
+            TARGET: aarch64-pc-windows-msvc,
+          }
+          - {
+            NAME: darwin-x64,
+            OS: macos-14,
+            TOOLCHAIN: stable,
+            TARGET: x86_64-apple-darwin,
+          }
+          - {
+            NAME: darwin-arm64,
+            OS: macos-14,
+            TOOLCHAIN: stable,
+            TARGET: aarch64-apple-darwin,
+          }
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.build.OS }}
     needs:
       - lint
       - rustfmt
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ matrix.build.TOOLCHAIN }}
+          target: ${{ matrix.build.TARGET }}
+          override: true
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --all-features
+          args: --release --locked --target ${{ matrix.build.TARGET }}
+          use-cross: ${{ matrix.build.OS == 'ubuntu-20.04' }}
