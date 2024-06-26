@@ -47,9 +47,6 @@ jobs:
           }
     name: Build
     runs-on: ${{ matrix.build.OS }}
-    needs:
-      - lint
-      - rustfmt
     steps:
       - name: Set the release version
         shell: bash
