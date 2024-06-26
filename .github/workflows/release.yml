@@ -117,6 +117,7 @@ jobs:
       - name: Publish the package
         shell: bash
         run: |
+          cp Readme.md npm/meta-repo/Readme.md
           cd "npm/meta-repo"
           npm install # requires optional dependencies to be present in the registry
           npm run build

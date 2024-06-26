@@ -1,6 +1,6 @@
 # meta-repo
 
-This is a toolkit to easily manage a mete repository that includes multiple related JavaScript modules. It is written in Rust (and blazing
+This is a toolkit to easily manage a meta repository that includes multiple related JavaScript modules. It is written in Rust (and blazing
 fast. 🚀🚀🚀).
 
 ## Terminology
@@ -34,13 +34,13 @@ You need to configure the meta repository by creating a file `meta-repo.config.j
     {
       "dir": "local directory where the app is located",
       "git": "git url of the app"
-}
+    }
   ],
   "packages": [
     {
       "dir": "local directory where the package is located",
       "git": "git url of the package"
-}
+    }
   ]
 }
 ```
