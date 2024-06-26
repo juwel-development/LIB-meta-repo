@@ -21,7 +21,7 @@ function getExePath() {
 
   try {
     // Since the binary will be located inside `node_modules`, we can simply call `require.resolve`
-    return require.resolve(`meta-repo-${os}-${arch}/bin/meta-repo${extension}`);
+    return require.resolve(`@juwel-development/meta-repo-${os}-${arch}/bin/meta-repo${extension}`);
   } catch (e) {
     throw new Error(
       `Couldn't find application binary inside node_modules for ${os}-${arch}`
