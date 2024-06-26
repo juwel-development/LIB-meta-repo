@@ -5,7 +5,7 @@ on:
 
 name: Release
 jobs:
-  build:
+  publish_binaries:
     strategy:
       matrix:
         build:
@@ -101,11 +101,24 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  publish-npm-base:
+    name: Publish the base NPM package
+    needs: publish_binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          registry-url: "https://registry.npmjs.org"
+
       - name: Publish the package
         shell: bash
         run: |
-          cd npm/meta-repo
-          npm ci # requires optional dependencies to be present in the registry
+          cd "npm/meta-repo"
+          npm install # requires optional dependencies to be present in the registry
           npm run build
           npm publish --access public
         env:
