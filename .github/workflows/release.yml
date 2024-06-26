@@ -101,3 +101,12 @@ jobs:
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish the package
+        shell: bash
+        run: |
+          cd npm/meta-repo
+          npm ci # requires optional dependencies to be present in the registry
+          npm run build
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
