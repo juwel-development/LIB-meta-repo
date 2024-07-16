@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = "4.5.7"
-serde_json = "1.0.118"
+clap = "4.5.9"
+serde_json = "1.0.120"
 config = "0.14.0"
-serde = { version = "1.0.203", features = ["derive"] }
+serde = { version = "1.0.204", features = ["derive"] }
 git2 = "0.19.0"
 openssl = { version = "0.10.64", features = ["vendored"] }
