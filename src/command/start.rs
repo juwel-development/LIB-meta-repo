@@ -21,9 +21,10 @@ pub fn start(app_name: String) {
     }
 
     // find the app in the config
-    let app_config = config.apps.iter().find(|app| {
-        app.get_package_name() == app_name
-    });
+    let app_config = config
+        .apps
+        .iter()
+        .find(|app| app.get_package_name() == app_name);
 
     if app_config.is_none() {
         eprintln!("App not found in config");
@@ -54,16 +55,18 @@ fn run_npm_start(dir: &String) {
         .output();
 }
 
-
 fn run_npm_link_dependency(package: &Package) {
-    let cache_dir = format!("node_modules/.cache/meta-repo/{}", package.get_package_name());
-    let source_path = format!("{}/{}/{}",
-                              current_dir().unwrap().display(),
-                              package.dir,
-                              package.output_dir
+    let cache_dir = format!(
+        "node_modules/.cache/meta-repo/{}",
+        package.get_package_name()
+    );
+    let source_path = format!(
+        "{}/{}/{}",
+        current_dir().unwrap().display(),
+        package.dir,
+        package.output_dir
     );
     let destination_path = format!("{}/{}", cache_dir, package.output_dir);
-
 
     // Ensure source directory exists
     if !std::path::Path::new(&source_path).exists() {
@@ -80,7 +83,7 @@ fn run_npm_link_dependency(package: &Package) {
         return;
     }
 
-    match symlink(&source_path, &destination_path) {
+    match symlink(&source_path, destination_path) {
         Ok(_) => println!("Symlink created successfully"),
         Err(e) => eprintln!("Error creating symlink: {:?}", e),
     }
@@ -91,11 +94,13 @@ fn run_npm_link_dependency(package: &Package) {
     std::fs::copy(package_json, &destination_package_json).expect("Failed to copy package.json");
     // remove scripts
     let package_json_content = std::fs::read_to_string(&destination_package_json).unwrap();
-    let package_json_parsed: serde_json::Value = serde_json::from_str(&package_json_content).unwrap();
+    let package_json_parsed: serde_json::Value =
+        serde_json::from_str(&package_json_content).unwrap();
     let mut package_json_parsed = package_json_parsed.as_object().unwrap().clone();
     package_json_parsed.remove("scripts");
     let package_json_parsed = serde_json::to_string_pretty(&package_json_parsed).unwrap();
-    std::fs::write(&destination_package_json, package_json_parsed).expect("Failed to write package.json");
+    std::fs::write(&destination_package_json, package_json_parsed)
+        .expect("Failed to write package.json");
 
     // run npm link
     let _ = std::process::Command::new("npm")
@@ -117,7 +122,10 @@ fn npm_link_dependencies(dir: &str, linked_packages: &[String]) {
     let package_name = package_json_parsed["name"].as_str().unwrap();
     for (dependency_name, _) in dependencies.unwrap() {
         if linked_packages.contains(dependency_name) {
-            println!("Linking dependency: {} -> {}", dependency_name, package_name);
+            println!(
+                "Linking dependency: {} -> {}",
+                dependency_name, package_name
+            );
             std::process::Command::new("npm")
                 .arg("link")
                 .arg(dependency_name)
