@@ -6,8 +6,8 @@ fast. 🚀🚀🚀).
 ## Terminology
 
 - **Meta Repository**: A repository that contains multiple related repositories.
-- **Package**: A JavaScript module that is publishing a library.
-- **Application**: A JavaScript module that is part of the meta repository and can be started.
+- **Package**: A JavaScript module that is published library, e.g. a component library or a domain package of a micro frontend architecture.
+- **Application**: A JavaScript module that is a delivered to the end user and uses the packages e.g. the frontend application.
 
 ## Features
 
