@@ -1,5 +1,11 @@
 use std::env::current_dir;
+
+#[cfg(target_os = "windows")]
+use std::os::windows::fs::{symlink_dir as symlink, symlink_file};
+#[cfg(not(target_os = "windows"))]
 use std::os::unix::fs::symlink;
+#[cfg(target_os = "windows")]
+use std::path::Path;
 
 use crate::configuration::config::Config;
 use crate::configuration::package::Package;
@@ -83,10 +89,7 @@ fn run_npm_link_dependency(package: &Package) {
         return;
     }
 
-    match symlink(&source_path, destination_path) {
-        Ok(_) => println!("Symlink created successfully"),
-        Err(e) => eprintln!("Error creating symlink: {:?}", e),
-    }
+    let _ = create_symlink(&source_path, &destination_path);
 
     // copy package.json
     let package_json = format!("{}/package.json", package.dir);
@@ -133,5 +136,24 @@ fn npm_link_dependencies(dir: &str, linked_packages: &[String]) {
                 .stdin(std::process::Stdio::inherit())
                 .stdout(std::process::Stdio::inherit());
         }
+    }
+}
+
+
+fn create_symlink(source: &str, destination: &str) -> std::io::Result<()> {
+    #[cfg(target_os = "windows")]
+    {
+        let source_path = Path::new(source);
+        let destination_path = Path::new(destination);
+        if source_path.is_dir() {
+            symlink(source, destination)
+        } else {
+            symlink_file(source, destination)
+        }
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        symlink(source, destination)
     }
 }

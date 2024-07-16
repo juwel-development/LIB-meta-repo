@@ -1,6 +1,6 @@
 {
   "name": "@juwel-development/meta-repo",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "bin": "lib/index.js",
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -12,11 +12,11 @@
     "typescript": "^5.5.2"
   },
   "optionalDependencies": {
-    "@juwel-development/meta-repo-linux-x64": "0.1.5",
-    "@juwel-development/meta-repo-linux-arm64": "0.1.5",
-    "@juwel-development/meta-repo-darwin-x64": "0.1.5",
-    "@juwel-development/meta-repo-darwin-arm64": "0.1.5",
-    "@juwel-development/meta-repo-windows-x64": "0.1.5",
-    "@juwel-development/meta-repo-windows-arm64": "0.1.5"
+    "@juwel-development/meta-repo-linux-x64": "0.1.6",
+    "@juwel-development/meta-repo-linux-arm64": "0.1.6",
+    "@juwel-development/meta-repo-darwin-x64": "0.1.6",
+    "@juwel-development/meta-repo-darwin-arm64": "0.1.6",
+    "@juwel-development/meta-repo-windows-x64": "0.1.6",
+    "@juwel-development/meta-repo-windows-arm64": "0.1.6"
   }
 }
