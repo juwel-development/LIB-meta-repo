@@ -1,8 +1,4 @@
-use std::fs::File;
-use std::io::BufReader;
-
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct App {
@@ -18,13 +14,9 @@ impl App {
         }
     }
 
-    pub fn get_name_from_package_json(&self) -> String {
-        let package_json = format!("{}/package.json", self.dir);
-        let file = File::open(package_json).unwrap();
-        let reader = BufReader::new(file);
-        let package_json: Value = serde_json::from_reader(reader).unwrap();
-        let name = package_json["name"].as_str().unwrap();
-
-        name.to_string()
+    pub fn get_package_name(&self) -> String {
+        let package_json = std::fs::read_to_string(format!("{}/package.json", self.dir)).unwrap();
+        let package_json: serde_json::Value = serde_json::from_str(&package_json).unwrap();
+        return package_json["name"].as_str().unwrap().to_string();
     }
 }
