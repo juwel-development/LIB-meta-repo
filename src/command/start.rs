@@ -1,9 +1,9 @@
 use std::env::current_dir;
 
-#[cfg(target_os = "windows")]
-use std::os::windows::fs::{symlink_dir as symlink, symlink_file};
 #[cfg(not(target_os = "windows"))]
 use std::os::unix::fs::symlink;
+#[cfg(target_os = "windows")]
+use std::os::windows::fs::{symlink_dir as symlink, symlink_file};
 #[cfg(target_os = "windows")]
 use std::path::Path;
 
@@ -138,7 +138,6 @@ fn npm_link_dependencies(dir: &str, linked_packages: &[String]) {
         }
     }
 }
-
 
 fn create_symlink(source: &str, destination: &str) -> std::io::Result<()> {
     #[cfg(target_os = "windows")]
