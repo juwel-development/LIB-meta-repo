@@ -143,7 +143,6 @@ fn create_symlink(source: &str, destination: &str) -> std::io::Result<()> {
     #[cfg(target_os = "windows")]
     {
         let source_path = Path::new(source);
-        let destination_path = Path::new(destination);
         if source_path.is_dir() {
             symlink(source, destination)
         } else {
